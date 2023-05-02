@@ -1,40 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import MeetupList from "../components/meetup/MeetupList";
+import MeetupsContext from "../store/meetups-context";
 
 function AllMeetupsPage() {
 
-    const [isLoading,setIsLoading] = useState(true);
-    const [meetups, setMeetups] = useState();
+    const meetupsContext = useContext(MeetupsContext);
 
     useEffect(() => {
-        setIsLoading(true);
-        fetch(
-                'https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup.json'
-        )
-        .then((response) => {
-               return response.json()
-            }
-        )
-        .then(data => {
-                const meetup_list = [];
-
-                for(const key in data){
-                    const meetup = {
-                        id : key,
-                        ...data[key]
-                    }
-
-                    meetup_list.push(meetup);
-                }
-                
-                setMeetups(meetup_list);
-                setIsLoading(false);
-
-            }
-        )
+        meetupsContext.getMeetups();
     },[]);
 
-    if(isLoading){
+    if(meetupsContext.isLoading){
         return (
             <section>
                 <p>Loading ...</p>
@@ -45,12 +21,10 @@ function AllMeetupsPage() {
         return (
             <section>
                 <h2 className="">All Meetups !!!</h2>
-                <MeetupList meetups={meetups} />
+                <MeetupList meetups={meetupsContext.meetups} />
             </section>
         )
-    }
-
-    
+    }    
 }
 
 export default AllMeetupsPage;

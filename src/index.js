@@ -5,13 +5,16 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { FavoritesContextProvider } from './store/favorites-context';
+import { MeetupsContextProvider } from './store/meetups-context';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <FavoritesContextProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <MeetupsContextProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </MeetupsContextProvider>
   </FavoritesContextProvider>
 );
 
