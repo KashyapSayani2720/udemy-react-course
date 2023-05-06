@@ -32,7 +32,6 @@ export function MeetupsContextProvider(props) {
       }
       
       setUserMeetups(meetup_list);
-      console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
       setIsLoading(false);
     });
   }

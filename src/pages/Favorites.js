@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import MeetupList from "../components/meetup/MeetupList";
 import FavoritesContext from "../store/favorites-context";
 
@@ -6,9 +6,7 @@ function FavoritesPage() {
 
     const favContext = useContext(FavoritesContext);
 
-    useEffect(() => {
-         favContext.getFavorites();
-    },[])
+    favContext.getFavorites();
 
     if(favContext.isLoading){
         return (

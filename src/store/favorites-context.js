@@ -1,69 +1,96 @@
 import { createContext, useState } from 'react';
 
 const FavoritesContext = createContext({
-  favorites : [],
-  totalFavorites : 0,
-  isLoading : true,
-  getFavorites : () => {},
-  addFavorite : (favoriteMeetup) => {},
-  removeFavorite : (meetupId) => {},
-  itemIsFavorite : (meetupId) => {}
+  favorites: [],
+  totalFavorites: 0,
+  isLoading: true,
+  getFavorites: () => { },
+  getTotalFavorites: () => { },
+  updateIsFavorite: () => { }
 });
 
 export function FavoritesContextProvider(props) {
   const [userFavorites, setUserFavorites] = useState([]);
-  const [isLoading,setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const baseUrl = "https://api-for-react-b4904-default-rtdb.firebaseio.com";
+  const [totalFavorites, setTotalFavorites] = useState(0);
 
-  async function getFavorites(){
-    
+  async function getFavorites() {
+
     setIsLoading(true);
 
-    fetch('https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup.json').then((response) => {
+    fetch(baseUrl + '/meetup.json?orderBy="isFav"&equalTo=true').then((response) => {
       return response.json()
-    }).then((data)=> {
+    }).then((data) => {
       const meetup_list = [];
-  
-      
-      for(const key in data){
+
+
+      for (const key in data) {
         const meetup = {
-          id : key,
+          id: key,
           ...data[key]
         }
-        
+
         meetup_list.push(meetup);
       }
-      
+
       setUserFavorites(meetup_list)
 
       setIsLoading(false)
     });
   }
 
-
-  function addFavoriteHandler(favoriteMeetup) {
-    setUserFavorites((prevUserFavorites) => {
-      return prevUserFavorites.concat(favoriteMeetup);
-    });
+  function getTotalFavorites() {
+    fetch('https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup.json?orderBy="isFav"&equalTo=true')
+      .then(response => response.json())
+      .then(data => {
+        const meetupIds = Object.keys(data);
+        const count = meetupIds.length;
+        setTotalFavorites(count)
+      });
   }
 
-  function removeFavoriteHandler(meetupId) {
-    setUserFavorites(prevUserFavorites => {
-      return prevUserFavorites.filter(meetup => meetup.id !== meetupId);
-    });
-  }
+  async function updateIsFavorite(meetupId, isFav) {
 
-  function itemIsFavoriteHandler(meetupId) {
-    return userFavorites.some(meetup => meetup.id === meetupId);
+    fetch(`https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup/${meetupId}.json`, {
+      method: 'PATCH', // use PATCH to update only the isFav property
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        isFav: !isFav // set the isFav property to the new value
+      })
+    })
+      .then(response => response.json())
+      .then(data => { 
+                      if(!isFav){
+                        setTotalFavorites(totalFavorites+1);
+                      } 
+                      else{
+                        setTotalFavorites(totalFavorites-1);
+
+                      }
+
+                      setUserFavorites(prevFavorites => {
+                        // Filter out the meetup with the specified id
+                        const updatedFavorites = prevFavorites.filter(meetup => meetup.id !== meetupId);
+                        // Return the updated array
+                        return updatedFavorites;
+                      });
+
+                      return data; 
+                    }
+            )
+      .catch(error => console.error(error));
   }
 
   const context = {
     favorites: userFavorites,
-    totalFavorites: userFavorites.length,
+    totalFavorites: totalFavorites,
     isLoading: isLoading,
     getFavorites: getFavorites,
-    addFavorite: addFavoriteHandler,
-    removeFavorite: removeFavoriteHandler,
-    itemIsFavorite: itemIsFavoriteHandler
+    getTotalFavorites: getTotalFavorites,
+    updateIsFavorite: updateIsFavorite
   };
 
   return (

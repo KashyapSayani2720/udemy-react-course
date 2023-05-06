@@ -1,23 +1,20 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import Card from '../ui/Card';
 import classes from './MeetupItem.module.css';
 import FavoritesContext from '../../store/favorites-context';
 
 function MeetupItem(props) {
 
-    const { id, image, title, address, description } = props.meetup;
+    let { id, image, title, address, description, isFav } = props.meetup;
 
     const favContext = useContext(FavoritesContext);
-    const isItemFav = favContext.itemIsFavorite(id);
 
+    const [isItemFav,setIsItemFav] = useState(isFav);
+        
 
     function handleFavorite() {
-        if(isItemFav){
-            favContext.removeFavorite(id);
-        }
-        else{
-            favContext.addFavorite(props.meetup);
-        }
+        setIsItemFav(!isItemFav);
+        favContext.updateIsFavorite(id,isItemFav);
     }
 
     return (

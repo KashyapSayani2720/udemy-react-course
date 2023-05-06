@@ -15,7 +15,8 @@ function NewMeetupForm(props) {
             title: titleRef.current.value,
             image: imageRef.current.value,
             address: addressRef.current.value,
-            description: descRef.current.value
+            description: descRef.current.value,
+            isFav : true
         };
         console.log(meetup);
 

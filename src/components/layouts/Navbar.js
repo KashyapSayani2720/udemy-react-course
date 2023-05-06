@@ -1,11 +1,14 @@
 import { Link } from "react-router-dom";
 import classes from './Navbar.module.css';
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import FavoritesContext from "../../store/favorites-context";
 
 function Navbar() {
 
     const favContext = useContext(FavoritesContext);
+    useEffect(()=>{
+        favContext.getTotalFavorites();
+    })
 
     return (
         <header className={classes.header}>
