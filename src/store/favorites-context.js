@@ -19,11 +19,10 @@ export function FavoritesContextProvider(props) {
 
     setIsLoading(true);
 
-    fetch(baseUrl + '/meetup.json?orderBy="isFav"&equalTo=true').then((response) => {
+    fetch(`${baseUrl}/meetup.json?orderBy="isFav"&equalTo=true`).then((response) => {
       return response.json()
     }).then((data) => {
       const meetup_list = [];
-
 
       for (const key in data) {
         const meetup = {
@@ -40,8 +39,8 @@ export function FavoritesContextProvider(props) {
     });
   }
 
-  function getTotalFavorites() {
-    fetch('https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup.json?orderBy="isFav"&equalTo=true')
+  async function getTotalFavorites() {
+    fetch(`${baseUrl}/meetup.json?orderBy="isFav"&equalTo=true`)
       .then(response => response.json())
       .then(data => {
         const meetupIds = Object.keys(data);
@@ -52,7 +51,7 @@ export function FavoritesContextProvider(props) {
 
   async function updateIsFavorite(meetupId, isFav) {
 
-    fetch(`https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup/${meetupId}.json`, {
+    fetch(`${baseUrl}/meetup/${meetupId}.json`, {
       method: 'PATCH', // use PATCH to update only the isFav property
       headers: {
         'Content-Type': 'application/json'

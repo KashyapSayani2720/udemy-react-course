@@ -37,6 +37,7 @@
     border: 1px solid #77002e;
     background-color: transparent;
     padding: 0.5rem 1.5rem;
+    margin-right: 0.5rem;
     border-radius: 4px;
   }
   
@@ -44,3 +45,34 @@
   .actions button:active {
     background-color: #ffe2ed;
   }
+
+
+  .modal__buttons {
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .modal__button {
+    padding: 0.5rem 1rem;
+    margin-left: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #333;
+    color: #fff;
+    font-size: 1rem;
+  }
+  
+  button--confirm {
+    background-color: #e74c3c;
+  }
+  
+  .modal__button--cancel {
+    background-color: #3498db;
+  }
+
+  .modal__button--update {
+    background-color: yellowgreen;
+  }
+  

@@ -1,30 +1,29 @@
+import { useContext } from "react";
 import NewMeetupForm from "../components/meetup/NewMeetupForm";
 import { useNavigate } from "react-router-dom";
+import MeetupsContext from "../store/meetups-context";
 
-function NewMeetupsPage() {
+function NewMeetupsPage(props) {
     
     const navigate = useNavigate();
+    const meetupContext = useContext(MeetupsContext);
 
-    function handleSubmit(meetup){
-        fetch(
-            'https://api-for-react-b4904-default-rtdb.firebaseio.com/meetup.json',
-            {
-                method: 'POST',
-                body: JSON.stringify(meetup),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        )
-        .then(
-            navigate('/')        
-        );
+    const { meetupdata } = props;
+
+    async function handleSubmit(meetup){
+        if(meetup.id){
+            await meetupContext.updateMeetup(meetup.id,meetup);
+        }
+        else{
+            await meetupContext.addMeetup(meetup);
+        }
+        navigate("/");
     }
     
     return (
         <section>
             <h1>New Meetups !!!</h1>
-            <NewMeetupForm onAddMeetup={handleSubmit} />
+            <NewMeetupForm onAddMeetup={handleSubmit} onUpdateMeetup={handleSubmit} meetup={meetupdata} />
         </section>
     );
 }
