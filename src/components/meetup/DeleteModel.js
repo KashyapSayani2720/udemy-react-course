@@ -1,7 +1,7 @@
+import classes from './DeleteModel.module.css';
 
 
-
-function DeleteModel() {
+function DeleteModel(props) {
     return (
         <div className={classes.modal}>
             <div className={classes.modal__content}>
@@ -11,19 +11,20 @@ function DeleteModel() {
                 <div className={classes.modal__buttons}>
                     <button
                         className={`${classes.modal__button} ${classes['modal__button--confirm']}`}
-                        onClick={handleConfirmDelete}
+                        onClick={props.handleConfirmDelete}
                     >
                         Yes
                     </button>
                     <button
                         className={`${classes.modal__button} ${classes['modal__button--cancel']}`}
-                        onClick={() => setShowModal(false)}
+                        onClick={() => props.setShowModal(false)}
                     >
                         Cancel
                     </button>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
+export default DeleteModel;

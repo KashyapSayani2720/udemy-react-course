@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import MeetupList from "../components/meetup/MeetupList";
 import MeetupsContext from "../store/meetups-context";
 
@@ -8,6 +8,7 @@ function AllMeetupsPage() {
 
     useEffect(() => {
         meetupsContext.getMeetups();
+        // eslint-disable-next-line
     },[]);
 
     if(meetupsContext.isLoading){

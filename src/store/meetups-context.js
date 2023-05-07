@@ -1,45 +1,45 @@
 import { createContext, useState } from 'react';
 
 const MeetupsContext = createContext({
-    meetups: [],
-    totalMeetups: 0,
-    isLoading: true,
-    getMeetups: () => {},
-    addMeetup: () => {},
-    deleteMeetup: () => {}
+  meetups: [],
+  totalMeetups: 0,
+  isLoading: true,
+  getMeetups: () => { },
+  addMeetup: () => { },
+  deleteMeetup: () => { }
 });
 
 export function MeetupsContextProvider(props) {
   const [userMeetups, setUserMeetups] = useState([]);
-  const [isLoading,setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const baseUrl = "https://api-for-react-b4904-default-rtdb.firebaseio.com";
 
-  async function getMeetups(){
-    
+  async function getMeetups() {
+
     setIsLoading(true);
 
     fetch(`${baseUrl}/meetup.json`).then((response) => {
-      return response.json()
-    }).then((data)=> {
+      return response.json();
+    }).then((data) => {
       const meetup_list = [];
-  
-      for(const key in data){
+
+      for (const key in data) {
         const meetup = {
-          id : key,
+          id: key,
           ...data[key]
         }
-        
+
         meetup_list.push(meetup);
       }
-      
+
       setUserMeetups(meetup_list);
       setIsLoading(false);
     })
-    .catch(error => console.error(error));;
+      .catch(error => console.error(error));;
   }
 
   async function addMeetup(meetup) {
-  
+
     fetch(
       `${baseUrl}/meetup.json`,
       {
@@ -49,13 +49,25 @@ export function MeetupsContextProvider(props) {
           'Content-Type': 'application/json'
         }
       }
-    ).then((response) => {return response.json();})
-      .then((data) =>{
-        console.log(data);
+    ).then((response) => {
+      if (response.ok) {
+        setUserMeetups(prevUserMeetups => {
+          return [
+            ...prevUserMeetups,
+            {
+              id: meetup.id,
+              title: meetup.title,
+              image: meetup.image,
+              address: meetup.address,
+              description: meetup.description,
+              isFav: meetup.isFav
+            }
+          ];
+        })
       }
-      ).catch((e) =>{
-        console.log(e);
-      });
+    }).catch((e) => {
+      console.log(e);
+    });
   }
 
   async function updateMeetup(meetupId, meetup) {
@@ -66,12 +78,29 @@ export function MeetupsContextProvider(props) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        meetup // set the isFav property to the new value
+        title: meetup.title,
+        image: meetup.image,
+        description: meetup.description,
+        address: meetup.address,
       })
     })
-      .then(response => response.json())
-      .then(data =>  {
-        return data;
+      .then(response => {
+        if (response.ok) {
+          setUserMeetups(prevUserMeetups => {
+            return prevUserMeetups.map(meetup => {
+              if (meetup.id === meetupId) {
+                return {
+                  ...meetup,
+                  title: meetup.title,
+                  image: meetup.image,
+                  address: meetup.address,
+                  description: meetup.description
+                };
+              }
+              return meetup;
+            });
+          });
+        }
       })
       .catch(error => console.error(error));
   }
@@ -79,22 +108,22 @@ export function MeetupsContextProvider(props) {
 
   async function deleteMeetup(meetupId) {
     const url = `${baseUrl}/meetup/${meetupId}.json`;
-  
+
     fetch(url, {
       method: 'DELETE'
     })
-    .then(response => {
-      setUserMeetups(prevUserMeetups => {
-        return prevUserMeetups.filter(meetup => meetup.id !== meetupId);
+      .then((response) => {
+        if (response.ok) {
+          setUserMeetups(prevUserMeetups => {
+            return prevUserMeetups.filter(meetup => meetup.id !== meetupId);
+          });
+        }
+      })
+      .catch(error => {
+        console.error(error);
       });
-    })
-    .catch(error => {
-      // Handle error here
-      console.error(error);
-    });
   }
-  
-  
+
   const context = {
     meetups: userMeetups,
     totalMeetups: userMeetups.length,

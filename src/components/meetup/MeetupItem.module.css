@@ -64,7 +64,7 @@
     font-size: 1rem;
   }
   
-  button--confirm {
+  .modal__button--confirm {
     background-color: #e74c3c;
   }
   

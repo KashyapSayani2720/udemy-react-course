@@ -2,13 +2,14 @@ import { useContext } from "react";
 import NewMeetupForm from "../components/meetup/NewMeetupForm";
 import { useNavigate } from "react-router-dom";
 import MeetupsContext from "../store/meetups-context";
+import { useLocation } from 'react-router-dom';
 
-function NewMeetupsPage(props) {
+function NewMeetupsPage() {
     
     const navigate = useNavigate();
     const meetupContext = useContext(MeetupsContext);
-
-    const { meetupdata } = props;
+    const location = useLocation();
+    const meetupData = location.state?.meetup;
 
     async function handleSubmit(meetup){
         if(meetup.id){
@@ -18,12 +19,13 @@ function NewMeetupsPage(props) {
             await meetupContext.addMeetup(meetup);
         }
         navigate("/");
+        
     }
     
     return (
         <section>
             <h1>New Meetups !!!</h1>
-            <NewMeetupForm onAddMeetup={handleSubmit} onUpdateMeetup={handleSubmit} meetup={meetupdata} />
+            <NewMeetupForm onAddMeetup={handleSubmit} onUpdateMeetup={handleSubmit} meetup={meetupData} />
         </section>
     );
 }

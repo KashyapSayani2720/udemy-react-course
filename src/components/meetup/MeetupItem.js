@@ -3,6 +3,8 @@ import Card from '../ui/Card';
 import classes from './MeetupItem.module.css';
 import FavoritesContext from '../../store/favorites-context';
 import MeetupsContext from '../../store/meetups-context';
+import { useNavigate } from 'react-router-dom';
+import DeleteModel from './DeleteModel';
 
 function MeetupItem(props) {
   let { id, image, title, address, description, isFav } = props.meetup;
@@ -12,10 +14,15 @@ function MeetupItem(props) {
 
   const [isItemFav, setIsItemFav] = useState(isFav);
   const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   async function handleFavorite() {
     await favContext.updateIsFavorite(id, isItemFav);
     setIsItemFav(!isItemFav);
+  }
+
+  async function handleUpdate(){
+    navigate("/new-meetup", {state: {meetup: props.meetup}});
   }
 
   function handleDelete() {
@@ -45,34 +52,14 @@ function MeetupItem(props) {
             </button>
             <button
                 className={`${classes.modal__button} ${classes['modal__button--update']}`}
-                onClick={handleConfirmDelete}
+                onClick={handleUpdate}
               >Update Meetup</button>
             <button className={`${classes.modal__button} ${classes['modal__button--confirm']}`} onClick={handleDelete}>Delete Meetup</button>
           </div>
         </Card>
       </li>
       {showModal && (
-        <div className={classes.modal}>
-          <div className={classes.modal__content}>
-            <div className={classes.modal__title}>
-              Are you sure you want to delete this meetup?
-            </div>
-            <div className={classes.modal__buttons}>
-              <button
-                className={`${classes.modal__button} ${classes['modal__button--confirm']}`}
-                onClick={handleConfirmDelete}
-              >
-                Yes
-              </button>
-              <button
-                className={`${classes.modal__button} ${classes['modal__button--cancel']}`}
-                onClick={() => setShowModal(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteModel handleConfirmDelete={handleConfirmDelete} setShowModal={setShowModal}/>
       )}
     </>
   );
