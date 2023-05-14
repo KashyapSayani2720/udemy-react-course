@@ -1,13 +1,6 @@
 import { createContext, useState } from 'react';
 
-const MeetupsContext = createContext({
-  meetups: [],
-  totalMeetups: 0,
-  isLoading: true,
-  getMeetups: () => { },
-  addMeetup: () => { },
-  deleteMeetup: () => { }
-});
+const MeetupsContext = createContext();
 
 export function MeetupsContextProvider(props) {
   const [userMeetups, setUserMeetups] = useState([]);
@@ -71,40 +64,44 @@ export function MeetupsContextProvider(props) {
   }
 
   async function updateMeetup(meetupId, meetup) {
+    try {
+      const response = await fetch(`${baseUrl}/meetup/${meetupId}.json`, {
+        method: 'PATCH', // use PATCH to update only the isFav property
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: meetup.title,
+          image: meetup.image,
+          description: meetup.description,
+          address: meetup.address,
+        })
+      });
+  
+      if (response.ok) {
+        // Fetch the updated data from the server
+        const updatedResponse = (await fetch(`${baseUrl}/meetup/${meetupId}.json`)).json();
 
-    fetch(`${baseUrl}/meetup/${meetupId}.json`, {
-      method: 'PATCH', // use PATCH to update only the isFav property
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        title: meetup.title,
-        image: meetup.image,
-        description: meetup.description,
-        address: meetup.address,
-      })
-    })
-      .then(response => {
-        if (response.ok) {
-          setUserMeetups(prevUserMeetups => {
-            return prevUserMeetups.map(meetup => {
-              if (meetup.id === meetupId) {
-                return {
-                  ...meetup,
-                  title: meetup.title,
-                  image: meetup.image,
-                  address: meetup.address,
-                  description: meetup.description
-                };
-              }
-              return meetup;
-            });
-          });
+       const meetup_list = [];
+
+      for (const key in updatedResponse) {
+        const meetup = {
+          id: key,
+          ...updatedResponse[key]
         }
-      })
-      .catch(error => console.error(error));
-  }
 
+        meetup_list.push(meetup);
+      }
+
+      setUserMeetups(meetup_list);
+      } else {
+        console.error('Failed to update meetup');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  
 
   async function deleteMeetup(meetupId) {
     const url = `${baseUrl}/meetup/${meetupId}.json`;

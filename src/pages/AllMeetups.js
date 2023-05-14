@@ -10,7 +10,7 @@ function AllMeetupsPage() {
         meetupsContext.getMeetups();
         // eslint-disable-next-line
     },[]);
-
+    
     if(meetupsContext.isLoading){
         return (
             <section>
