@@ -95,7 +95,7 @@ export function MeetupsContextProvider(props) {
 
       setUserMeetups(meetup_list);
       } else {
-        console.error('Failed to update meetup');
+        console.error('Failed to update Meetup');
       }
     } catch (error) {
       console.error(error);
